@@ -66,8 +66,6 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                       ),
                     ),
                   ],
-                  totalRepeatCount: 2,
-                  pause: const Duration(milliseconds: 3000),
                 ),
               ],
             ),
