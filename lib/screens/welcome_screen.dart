@@ -31,9 +31,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
     controller.forward();
 
     controller.addListener(() {
-      setState(() {
-        print(animation.value);
-      });
+      setState(() {});
     });
   }
 
@@ -48,6 +46,7 @@ class _WelcomeScreenState extends State<WelcomeScreen>
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Hero(
                   tag: 'logo',
@@ -61,13 +60,13 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                     TypewriterAnimatedText(
                       'Flash Chat',
                       textStyle: TextStyle(
-                        color: Colors.grey,
+                        color: Colors.black,
                         fontSize: 45.0,
                         fontWeight: FontWeight.w900,
                       ),
                     ),
                   ],
-                  totalRepeatCount: 3,
+                  totalRepeatCount: 2,
                   pause: const Duration(milliseconds: 3000),
                 ),
               ],
