@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="co.appbrewery.flash_chat">
-   <application
-        android:label="flash chat"
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <application
+       android:label="flash chat"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

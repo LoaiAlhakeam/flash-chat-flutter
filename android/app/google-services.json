@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "903688066652",
-    "project_id": "flash-chat-7a2a8",
-    "storage_bucket": "flash-chat-7a2a8.appspot.com"
+    "project_number": "501869803189",
+    "project_id": "flash-chat-86007",
+    "storage_bucket": "flash-chat-86007.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:903688066652:android:de4692a1c33e9818f43899",
+        "mobilesdk_app_id": "1:501869803189:android:42b289f889a57c4672f0fc",
         "android_client_info": {
           "package_name": "co.loai.flash_chat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "903688066652-bqi9napnbqulgik33sosrt5nh8n64ciq.apps.googleusercontent.com",
+          "client_id": "501869803189-3c6du15etnt6d4olvego4o2okh8uskee.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAm-F1U_C-mfKQIlLK7-U9CKI5AkPdA2Us"
+          "current_key": "AIzaSyBS9GUk4DHR_9Oi-xcPyAg-MBIeZBEPagU"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "903688066652-bqi9napnbqulgik33sosrt5nh8n64ciq.apps.googleusercontent.com",
+              "client_id": "501869803189-3c6du15etnt6d4olvego4o2okh8uskee.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
