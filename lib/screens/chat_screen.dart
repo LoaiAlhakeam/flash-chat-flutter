@@ -56,6 +56,7 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            MessageStream(),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -87,6 +88,78 @@ class _ChatScreenState extends State<ChatScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class MessageStream extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _fireStore.collection('messages').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return CircularProgressIndicator();
+        }
+        final messages = snapshot.data.docs;
+        List<Widget> messagesBubbles = [];
+        for (var message in messages) {
+          final messageText = message['message'];
+          final messageSender = message['sender'];
+          messagesBubbles.add(
+            MessageBubble(
+                messageText: messageText, messageSender: messageSender),
+          );
+        }
+        return Expanded(
+          child: ListView(
+            padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
+            children: messagesBubbles,
+          ),
+        );
+      },
+    );
+  }
+}
+
+class MessageBubble extends StatelessWidget {
+  MessageBubble({@required this.messageText, @required this.messageSender});
+
+  final messageText;
+  final messageSender;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Material(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            '$messageSender',
+            style: TextStyle(
+              color: Colors.black54,
+              fontSize: 12.0,
+            ),
+          ),
+          Material(
+            color: Colors.lightBlueAccent,
+            borderRadius: BorderRadius.circular(35.0),
+            elevation: 5.0,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
+              child: Text(
+                '$messageText',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 17.0,
+                ),
+              ),
+            ),
+          ),
+        ],
+      )),
     );
   }
 }
