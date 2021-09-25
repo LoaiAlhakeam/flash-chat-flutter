@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 final _fireStore = FirebaseFirestore.instance;
+User currentUser;
 
 class ChatScreen extends StatefulWidget {
   static const String id = 'chat_screen';
@@ -15,14 +17,12 @@ class ChatScreen extends StatefulWidget {
 class _ChatScreenState extends State<ChatScreen> {
   final _auth = FirebaseAuth.instance;
   String message;
-  User currentUser;
 
   void getCurrentUser() {
     try {
       final user = _auth.currentUser;
       if (user != null) {
         currentUser = user;
-        print(currentUser.email);
       }
     } catch (e) {
       print('current user error' + e);
@@ -37,6 +37,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final messageController = TextEditingController();
+
     return Scaffold(
       appBar: AppBar(
         leading: null,
@@ -64,6 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: <Widget>[
                   Expanded(
                     child: TextField(
+                      controller: messageController,
                       onChanged: (value) {
                         message = value;
                       },
@@ -72,6 +75,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   FlatButton(
                     onPressed: () {
+                      messageController.clear();
                       _fireStore.collection('messages').add({
                         'sender': currentUser.email,
                         'message': message,
@@ -101,18 +105,23 @@ class MessageStream extends StatelessWidget {
         if (!snapshot.hasData) {
           return CircularProgressIndicator();
         }
-        final messages = snapshot.data.docs;
+        final messages = snapshot.data.docs.reversed;
         List<Widget> messagesBubbles = [];
         for (var message in messages) {
           final messageText = message['message'];
           final messageSender = message['sender'];
+          bool isMe = currentUser.email == messageSender;
           messagesBubbles.add(
             MessageBubble(
-                messageText: messageText, messageSender: messageSender),
+              messageText: messageText,
+              messageSender: messageSender,
+              isMe: isMe,
+            ),
           );
         }
         return Expanded(
           child: ListView(
+            reverse: true,
             padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 10.0),
             children: messagesBubbles,
           ),
@@ -123,10 +132,14 @@ class MessageStream extends StatelessWidget {
 }
 
 class MessageBubble extends StatelessWidget {
-  MessageBubble({@required this.messageText, @required this.messageSender});
+  MessageBubble(
+      {@required this.messageText,
+      @required this.messageSender,
+      @required this.isMe});
 
   final messageText;
   final messageSender;
+  final bool isMe;
 
   @override
   Widget build(BuildContext context) {
@@ -134,7 +147,8 @@ class MessageBubble extends StatelessWidget {
       padding: EdgeInsets.all(10.0),
       child: Material(
           child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           Text(
             '$messageSender',
@@ -144,15 +158,23 @@ class MessageBubble extends StatelessWidget {
             ),
           ),
           Material(
-            color: Colors.lightBlueAccent,
-            borderRadius: BorderRadius.circular(35.0),
+            color: isMe ? Colors.lightBlueAccent : Colors.white,
+            borderRadius: isMe
+                ? BorderRadius.only(
+                    bottomLeft: Radius.circular(35.0),
+                    bottomRight: Radius.circular(35.0),
+                    topLeft: Radius.circular(35.0))
+                : BorderRadius.only(
+                    bottomLeft: Radius.circular(35.0),
+                    bottomRight: Radius.circular(35.0),
+                    topRight: Radius.circular(35.0)),
             elevation: 5.0,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Text(
                 '$messageText',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: isMe ? Colors.white : Colors.black,
                   fontSize: 17.0,
                 ),
               ),
