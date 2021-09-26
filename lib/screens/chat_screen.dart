@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:intl/intl.dart';
 
 final _fireStore = FirebaseFirestore.instance;
 User currentUser;
@@ -79,6 +80,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       _fireStore.collection('messages').add({
                         'sender': currentUser.email,
                         'message': message,
+                        'time': DateTime.now(),
                       });
                     },
                     child: Text(
@@ -100,21 +102,25 @@ class MessageStream extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _fireStore.collection('messages').snapshots(),
+      stream: _fireStore.collection('messages').orderBy('time').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) {
-          return CircularProgressIndicator();
+          return Container(
+            child: CircularProgressIndicator(),
+          );
         }
         final messages = snapshot.data.docs.reversed;
         List<Widget> messagesBubbles = [];
         for (var message in messages) {
           final messageText = message['message'];
           final messageSender = message['sender'];
+          final messageTime = message['time'];
           bool isMe = currentUser.email == messageSender;
           messagesBubbles.add(
             MessageBubble(
               messageText: messageText,
               messageSender: messageSender,
+              messageTime: messageTime,
               isMe: isMe,
             ),
           );
@@ -135,10 +141,12 @@ class MessageBubble extends StatelessWidget {
   MessageBubble(
       {@required this.messageText,
       @required this.messageSender,
+      @required this.messageTime,
       @required this.isMe});
 
   final messageText;
   final messageSender;
+  final messageTime;
   final bool isMe;
 
   @override
@@ -180,6 +188,18 @@ class MessageBubble extends StatelessWidget {
               ),
             ),
           ),
+          // Padding(
+          //   padding: isMe
+          //       ? EdgeInsets.fromLTRB(0, 5, 10, 0)
+          //       : EdgeInsets.fromLTRB(15, 5, 0, 0),
+          //   child: Text(
+          //     '$messageTime',
+          //     style: TextStyle(
+          //       color: Colors.black45,
+          //       fontSize: 9.0,
+          //     ),
+          //   ),
+          // ),
         ],
       )),
     );
